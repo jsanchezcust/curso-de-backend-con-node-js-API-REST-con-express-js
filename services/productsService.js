@@ -21,23 +21,47 @@ class productsService {
     }
 
     find(){
-        return this.products;
+        return new Promise((resolve, reject) => {
+            setTimeout( () => {
+                resolve(this.products);
+            }, 5000);
+        });
     }
 
     findOne(id) {
+        const name = this.getName();
         return this.products.find(item => item.id === id)? this.products.find(item => item.id === id): 'No Encontrado';
     }
 
-    create() {
-
+    async create(data) {
+        const newProduct = {
+            id: faker.datatype.uuid(),
+            ...data
+        }
+        this.products.push(newProduct);
+        return newProduct;
     }
 
-    update() {
-
+    async update(id, changes) {
+        const index = this.products.findIndex(item => item.id === id);
+        if(index === -1){
+            throw new Error('Product not found');
+        }
+        const product = this.products[index];
+        this.products[index] = {
+            ...product,
+            ...changes
+        };
+        return this.products[index];
     }
 
-    delete() {
-
+    async delete(id) {
+        const index = this.products.findIndex(item => item.id === id);
+        if(index === -1){
+            throw new Error('Product not found');
+        }
+        this.products.splice(index, 1);
+        return {id}
     }
 }
 
