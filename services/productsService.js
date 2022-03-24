@@ -16,7 +16,7 @@ class productsService {
                 {
                     id : faker.datatype.uuid(),
                     name : faker.commerce.productName(),
-                    state: parseInt(faker.commerce.price(), 10),
+                    price: parseInt(faker.commerce.price(), 10),
                     imgURL: faker.image.imageUrl(),
                     isBlock: faker.datatype.boolean()
                 }
