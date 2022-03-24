@@ -1,6 +1,9 @@
 // npm i faker@5.5.3 -S
 const faker = require('faker');
 
+// npm i @hapi/boom  -> Para el manejo de errores con Boom
+const boom = require('@hapi/boom');
+
 class productsService {
     constructor() {
         this.products = [];
@@ -14,7 +17,8 @@ class productsService {
                     id : faker.datatype.uuid(),
                     name : faker.commerce.productName(),
                     state: parseInt(faker.commerce.price(), 10),
-                    imgURL: faker.image.imageUrl()
+                    imgURL: faker.image.imageUrl(),
+                    isBlock: faker.datatype.boolean()
                 }
             )
         }
@@ -28,9 +32,15 @@ class productsService {
         });
     }
 
-    findOne(id) {
-        const name = this.getName();
-        return this.products.find(item => item.id === id)? this.products.find(item => item.id === id): 'No Encontrado';
+    async findOne(id) {
+        const product = this.products.find(item => item.id === id);
+        if(!product){
+            throw boom.notFound('Product not found');
+        }
+        if(product.isBlock){
+            throw boom.conflict('Product is block');
+        }
+        return product;
     }
 
     async create(data) {
@@ -45,7 +55,7 @@ class productsService {
     async update(id, changes) {
         const index = this.products.findIndex(item => item.id === id);
         if(index === -1){
-            throw new Error('Product not found');
+            throw boom.notFound('Product not found');
         }
         const product = this.products[index];
         this.products[index] = {
@@ -58,7 +68,7 @@ class productsService {
     async delete(id) {
         const index = this.products.findIndex(item => item.id === id);
         if(index === -1){
-            throw new Error('Product not found');
+            throw boom.notFound('Product not found');
         }
         this.products.splice(index, 1);
         return {id}

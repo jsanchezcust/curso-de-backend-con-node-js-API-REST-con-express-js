@@ -34,16 +34,14 @@ router.post('/', async (req, res) => {
 
 // Se puede utilizar update para actualizar todos los campos y patch para autualizar una parte, esto es 
 // según la convención Api rest
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', async (req, res, next) => {
     try {
         const { id } = req.params;
         const body  = req.body;
         const product = await service.update(id, body);
         res.status(200).json(product);
     } catch (error) {
-        res.status(404).json({
-            message:error.message
-        });
+        next(error);
     }
 });
 

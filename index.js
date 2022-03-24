@@ -2,7 +2,7 @@ const express = require('express');
 // Aqui busca el módulo routerApi en el archivo index.js en la carpeta routers
 const routerApi = require('./routes');
 
-const { logErrors, errorHandler  } = require('./middleware/error.handler');
+const { logErrors, errorHandler, boomErrorHandler  } = require('./middleware/error.handler');
 
 const app = express();
 const port = 3000;
@@ -17,6 +17,7 @@ app.get('/', (req, res) => {
 routerApi(app);
 
 app.use(logErrors);
+app.use(boomErrorHandler);
 app.use(errorHandler);
 
 app.listen(port , () => {
